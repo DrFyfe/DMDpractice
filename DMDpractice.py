@@ -23,7 +23,7 @@ def createcoord(rx,ry,rz):
     cell2 = 0.5 * cell
     def rx(n):
         n = range(5)
-        if (n = 1):
+        if (n = 1 or 3):
             rx = 0.0
         else:
             rx = cell2

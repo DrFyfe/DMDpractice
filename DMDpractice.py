@@ -24,11 +24,33 @@ def createcoord(rx,ry,rz):
     def rx(n):
         n = range(5)
         if n == 1:
-            return 0.0
+            rx = 0.0
         elif n == 3:
-            return 0.0
+            rx = 0.0
         else:
-            return cell2
+            rx = cell2
+    def ry(n):
+        n = range(5)
+        if n == 1:
+            ry = 0.0
+        elif n == 4:
+            ry = 0.0
+        else:
+            ry = cell2        
+    def rz(n):
+        n = range(5)
+        if n == 1:
+            rz = 0.0
+        elif n == 2:
+            rz = 0.0
+        else:
+            rz = cell2
+createcoord(1,1,1)
+print(rx)
+print(ry)
+print(rz)
+
+
 
 
     

@@ -16,52 +16,48 @@ density = input("Enter reduced density: ")
 
 ncoll = input("Enter number of collisions required: ") #required user inputs
 
-def createcoord(rx,ry,rz): #trying to recreate the createcoord subroutine
+def createcoord(): #trying to recreate the createcoord subroutine
     n = 108
     nc = 3
     cell = 1.0 / nc
     cell2 = 0.5 * cell
     def rx(n):
-        for n in range(5):
+        for n in range(1,4):
             if n == 1:
-                rx(n) = 0.0
+                rx = 0.0
             elif n == 3:
-                rx(n) = 0.0
+                rx = 0.0
             else:
-                rx(n) = cell2
+                rx = cell2
     def ry(n):
-        for n in range(5):
+        for n in range(1,4):
             if n == 1:
-                ry(n) = 0.0
+                ry = 0.0
             elif n == 4:
-                ry(n) = 0.0
+                ry = 0.0
             else:
-                ry(n) = cell2
+                ry = cell2
     def rz(n):
-        for n in range(5):
+        for n in range(1,4):
             if n == 1:
-                ry(n) = 0.0
+                ry = 0.0
             elif n == 4:
-                ry(n) = 0.0
+                ry = 0.0
             else:
-                ry(n) = cell2
-        rx(1)
-        ry(1)
-        rz(1)
+                ry = cell2
     m = 0
     for iz in range(1, nc):
         for iy in range(1, nc):
             for ix in range(1, nc):
                 for iref in range(1,4):
-                    #define rx(iref+m) etc
-                m = m +4 # I don't understand this. is it necessary?
-
-                
+                    rx = rx(iref) + cell*(ix-1)
+                    ry = ry(iref) + cell*(iy-1)
+                    rz = rz(iref) + cell*(iz-1) #end subroutine createcoord()
 createcoord()
 createvel()
 check()
-if ovrlap is true
-    return "Particle overlap in final configuration"
+if ovrlap is true:
+    print("Particle overlap in final configuration")
 
 kecntr = 50
 en = e/n

@@ -36,5 +36,5 @@ def createcoord(): #trying to recreate the createcoord subroutine
                 m = m + 4
             continue
         continue
-createcoord()
+createcoord() #for testing purposes
 

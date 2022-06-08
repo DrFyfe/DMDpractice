@@ -25,7 +25,7 @@ def createcoord(): #trying to recreate the createcoord subroutine
     cell = 1.0 / nc
     cell2 = 0.5 * cell
     def rx(n):
-        for n in range(1,4):
+        for n in range(1,5):
             if n == 1:
                 rx = 0.0
             elif n == 3:
@@ -33,7 +33,7 @@ def createcoord(): #trying to recreate the createcoord subroutine
             else:
                 rx = cell2
     def ry(n):
-        for n in range(1,4):
+        for n in range(1,5):
             if n == 1:
                 ry = 0.0
             elif n == 4:
@@ -41,7 +41,7 @@ def createcoord(): #trying to recreate the createcoord subroutine
             else:
                 ry = cell2
     def rz(n):
-        for n in range(1,4):
+        for n in range(1,5):
             if n == 1:
                 ry = 0.0
             elif n == 4:

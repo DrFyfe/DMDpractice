@@ -10,7 +10,6 @@ from dnlist import dnlist
 from uplist import uplist
 from grsort import grsort
 from bump_subroutine import bump
-n = 108 # number of atoms
 timbig = 1.0E10 # maximum time
 pi = 3.14159265359
 maxbin = 500
@@ -24,7 +23,7 @@ print('Results in Units kt = sigma = 1')
 title = input("Enter run title: ")
 f = open(title, "w") #trying to have the output file named
 
-n = input("Enter number of spheres:")
+n = input("Enter number of spheres:") #number of spheres
 density = input("Enter reduced density: ")
 
 ncoll = input("Enter number of collisions required: ") #required user inputs
@@ -42,8 +41,114 @@ vx = np.arange(0,n,dtype=float)
 vy = np.arange(0,n,dtype=float)
 vz = np.arange(0,n,dtype=float)
 
+def createcoord(): #trying to recreate the createcoord subroutine
+    nc = 3
+    cell = 1.0 / nc
+    cell2 = 0.5 * cell
+    
+    rx[0] = 0.0   #subblatice a
+    ry[0] = 0.0
+    rz[0] = 0.0
 
+    rx[1] = cell2 #sublattice b
+    ry[1] = cell2
+    rz[1] = 0.0
 
+    rx[2] = 0.0   #sublattice c
+    ry[2] = cell2
+    rz[2] = cell2
+
+    rx[3] = cell2 #sublattice d
+    ry[3] = 0.0
+    rz[3] = cell2
+    for m in range(0,n-4,4):
+        for iz in range(0,nc):
+            for iy in range(0,nc):
+                for ix in range(0,nc):
+                    for iref in range(0,3):
+                        rx[iref + m] = rx[iref] + cell*(ix-1)
+                        ry[iref + m] = ry[iref] + cell*(iy-1)
+                        rz[iref + m] = rz[iref] + cell*(iz-1)
+                        continue
+                    continue
+                continue
+            continue
+        continue
+    for i in range(0,n):
+        rx[i] = rx[i]-0.5
+        ry[i] = ry[i]-0.5
+        rz[i] = rz[i]-0.5
+        print("rx, ry, rz", float(rx[i]),float(ry[i]),float(rz[i]))
+        continue
+    return
+
+def createvel():
+    kb = 1
+    temp = 3
+    destemp = float(input("Enter desired reduced temp: "))
+
+    rtemp = math.sqrt(destemp)
+    meanke = (1.5*kb*rtemp)/n
+    sigmavel = 1/(2*meanke)
+
+    for i in range(0,n):
+        vx[i]= rtemp*random.gauss(0,1)
+        vy[i]= rtemp*random.gauss(0,1)
+        vz[i]= rtemp*random.gauss(0,1)
+        continue
+    sumx = 0.0
+    sumy = 0.0
+    sumz = 0.0
+    for i in range(0,n):
+        sumx = sumx + vx[i]
+        sumy = sumy + vy[i]
+        sumz = sumz + vz[i]
+        continue
+    sumx = sumx/float(n)
+    sumy = sumy/float(n)
+    sumz = sumz/float(n)
+    for i in range(0,n):
+        vx[i] = vx[i]-sumx
+        vy[i] = vy[i]-sumy
+        vz[i] = vz[i]-sumz
+        print(vx,vy,vz)
+        continue
+    return
+
+def check(): #tests for pair overlaps, calculates kinetic energy
+    n = 108
+    tol = 1.0E-4
+    sigmasq = sigma**2
+    #ovrlap= .false.
+    e = 0.0
+
+    for i in range(0,n):
+        rxi = rx[i]
+        ryi = ry[i]
+        rzi = rz[i]
+        print("rxi, ryi, rzi", float(rx[i]), float(ry[i]), float(rz[i]))
+    
+        for j in range(i, n):
+
+            rxij = rxi - rx[j]
+            ryij = ryi - ry[j]
+            rzij = rzi - rz[j]
+            rxij = rxij - int(rxij)
+            ryij = ryij - int{ryij}
+            rzij = rzij - int(rzij)
+            rijsq = rxij**2 + ryij**2 + rzij**2
+            rij = math.sqrt(rijsq/sigsq)
+
+            if (rijsq < sigsq):
+                rij = math.sqrt(rijsq/sigsq)
+            if ((1.0-rij) > tol): #need to figure out overlap
+            continue
+        continue
+    for i in range(0, n):
+        e = e + vx[i]**2 + vy[i]**2 + vz[i]**2
+        continue
+    e = 0.5*e
+    return
 
 createcoord()
 

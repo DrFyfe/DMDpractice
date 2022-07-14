@@ -7,6 +7,7 @@ timbig = 1.0E10 # maximum time
 pi = 3.14159265359
 maxbin = 500
 delr = 0.001
+sigsq = sigma**2
 
 print('PROGRAM SPHERE')
 print('Molecular Dynamics of Hard Spheres')
@@ -110,8 +111,6 @@ def createvel():
 
 def check(): #tests for pair overlaps, calculates kinetic energy
     tol = 1.0E-4
-    sigmasq = sigma**2
-    #ovrlap= .false.
     e = 0.0
 
     for i in range(0,n):
@@ -133,7 +132,8 @@ def check(): #tests for pair overlaps, calculates kinetic energy
 
             if (rijsq < sigsq):
                 rij = math.sqrt(rijsq/sigsq)
-            if ((1.0-rij) > tol): #need to figure out overlap
+            if ((1.0-rij) > tol):
+		sys.exit("Overlap Detected")
             continue
         continue
     for i in range(0, n):
@@ -147,9 +147,6 @@ createcoord()
 createvel()
 
 check()
-
-if ovrlap:
-    exit()
 kecentr = 50
 en = e/float(n)
 temp = 2.0*en/3.0
@@ -212,7 +209,6 @@ for k in range(0,n):
 coltim[n+1] = coltim[n+1] - tij
 
 def bump():
-    sigsq = sigma**2
     rxij = rx[i] - rx[j]
     ryij = ry[i] - ry[j]
     rzij = rz[i] - rz[j]

@@ -9,7 +9,7 @@ def grsort():
     maxbin = 500
     delr = 0.001
 
-    for i in range(i+1,n+1):
+    for i in range(i,n):
         rxij = rxi - rx[j]
         ryij = ryi - ry[j]
         rzij = rzi - rz[j]

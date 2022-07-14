@@ -3,13 +3,6 @@ import math
 import random
 import array as arr
 import numpy as np
-from check import check
-from createcoord import createcoord
-from createvel import createvel
-from dnlist import dnlist
-from uplist import uplist
-from grsort import grsort
-from bump_subroutine import bump
 timbig = 1.0E10 # maximum time
 pi = 3.14159265359
 maxbin = 500
@@ -89,7 +82,7 @@ def createvel():
 
     rtemp = math.sqrt(destemp)
     meanke = (1.5*kb*rtemp)/n
-    sigmavel = 1/(2*meanke)
+    sigmavel = 1/(2*meanke) #possibly no longer needed, keeping around just in case
 
     for i in range(0,n):
         vx[i]= rtemp*random.gauss(0,1)
@@ -116,7 +109,6 @@ def createvel():
     return
 
 def check(): #tests for pair overlaps, calculates kinetic energy
-    n = 108
     tol = 1.0E-4
     sigmasq = sigma**2
     #ovrlap= .false.
@@ -218,6 +210,31 @@ for k in range(0,n):
     continue
 
 coltim[n+1] = coltim[n+1] - tij
+
+def bump():
+    sigsq = sigma**2
+    rxij = rx[i] - rx[j]
+    ryij = ry[i] - ry[j]
+    rzij = rz[i] - rz[j]
+    rxij = rxij - int(rxij)
+    ryij = ryij - int(ryij)
+    rzij = rzij - int(rzij)
+
+    factor = (rxij*(vx[i]-vx[j]) + ryij*(vy[i]-vy[j]) + rzij*(vz[i]-vz[j])/sigsq
+
+    delvx = -factor*rxij
+    delvy = -factor*ryij
+    delvz = -factor*rzij
+
+    vx[i] = vx[i] + delvx
+    vx[j] = vx[j] - delvx
+    vy[i] = vy[i] + delvy
+    vy[j] = vy[j] - delvy
+    vz[i] = vz[i] + delvz
+    vz[j] = vz[j] - delvz
+
+    w = delvx*rxij + delvy*ryij + delvz*rzij
+    return
 
 bump()
 

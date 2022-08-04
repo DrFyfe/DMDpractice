@@ -34,7 +34,7 @@ createvel()
 check()
 
 if ovrlap:
-    exit()
+    sys.exit("Particle overlap in initial configuration")
 kecentr = 50
 en = e/float(n)
 temp = 2.0*en/3.0

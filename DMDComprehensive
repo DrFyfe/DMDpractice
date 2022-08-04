@@ -146,15 +146,15 @@ print("Final time is", t)
 print("Collision rate is", rate)
 print("Mean collision time", tbc)
 print("Final e/nkt is",enkt)
-print("PV/nkt � 1 is", pvnkt1)
+print("PV/nkt - 1 is", pvnkt1)
 f.write('The final grcount is', grcount)
 
-#calculate g(r) page 184 tildesley
+!calculate g(r) page 184 tildesley
 
 grconst = 4.0*pi*n/3
 
 for bin in range(1,maxbin):
-	rlower = REAL(bin-1)*delr
+	rlower = (bin-1)*delr
 	rupper = rlower + delr
 	nideal = grconst*(rupper**3 - rlower**3)
 	gr[bin] = float(hist(bin))/float(steps)/float(n)/nideal

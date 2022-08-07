@@ -264,9 +264,6 @@ print("Final Colliding Pair", i, j)
 #checking for overlaps
 check()
 
-if ovrlap:
-    print("PARTICLE OVERLAP IN FINAL CONFIGURATION")
-
 pvnkt1 = acw/(float(n)*3.0*t*temp)
 en=e/float(n)
 enkt = en/temp
@@ -290,7 +287,7 @@ f.write('The final grcount is', grcount)
 grconst = 4.0*pi*n/3
 
 for bin in range(0,maxbin):
-	rlower = REAL(bin-1)*delr
+	rlower = float(bin-1)*delr
 	rupper = rlower + delr
 	nideal = grconst*(rupper**3 - rlower**3)
 	gr[bin] = float(hist(bin))/float(steps)/float(n)/nideal

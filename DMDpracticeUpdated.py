@@ -34,6 +34,7 @@ rz = np.arange(0,n,dtype=float)
 vx = np.arange(0,n,dtype=float)
 vy = np.arange(0,n,dtype=float)
 vz = np.arange(0,n,dtype=float)
+#possibly make arrays for gr, coltime, etc?
 
 def createcoord(): #trying to recreate the createcoord subroutine
     nc = 3

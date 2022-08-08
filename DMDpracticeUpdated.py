@@ -141,6 +141,84 @@ def check(): #tests for pair overlaps, calculates kinetic energy
         continue
     e = 0.5*e
     return
+def dnlist(): #looks for collisions with atoms i<j
+    if (j == 1):
+        return
+    rxj = rx[j]
+    ryj = ry[j]
+    rzj = rz[j]
+    vxj = vx[j]
+    vyj = vy[j]
+    vzj = vz[j]
+
+    for i in range(1, j):
+        rxij = rx[i] - rxj
+        ryij = ry[i] - ryj
+        rzij = rz[i] - rzj
+        rxij = rxij - int(rxij)
+        ryij = ryij -  int(ryij)
+        rzij = rzij - int(rzij)
+        vxij = vx[i] - vxj
+        vyij = vy[i] - vyj
+        vzij = vz[i] - vzj
+        bij = rxij*vxij + ryij*vyij + rzij*vzij
+        ryij = ry(i) - ryj
+        rzij = rz(i) - rzj
+        rxij = rxij - int(rxij)
+        ryij = ryij -  int(ryij)
+        rzij = rzij - int(rzij)
+        vxij = vx(i) - vxj
+        vyij = vy(i) - vyj
+        vzij = vz(i) - vzj
+        bij = rxij*vxij + ryij*vyij + rzij*vzij
+
+        if (bij < 0.0):
+            rijsq = rxij**2 + ryij**2 + rzij**2
+            vijsq = vxij**2 + vyij**2 + vzij**2
+            discr = bij**2 - vijsq*(rijsq-sigsq)
+        if (discr > 0.0):
+            tij = (-bij - SQRT(discr))/vijsq
+        if (tij < coltim[i]):
+            coltim[i] = tij
+            partnr[i] = j
+	continue
+    return
+
+def uplist():
+    if (i == n):
+        return
+    coltim[i] = timbig
+    rxi = rx[i]
+    ryi = ry[i]
+    rzi = rz[i]
+    vxi = vx[i]
+    vyi = vy[i]
+    vzi = vz[i]
+
+    for j in range(i+1,n): #potentially needs range correction
+        rxij = rxi - rx[j]
+        ryij = ryi - ry[j]
+        rzij = rzi - rz[j]
+        rxij = rxij - int(rxij) #rounds its argument to the nearest whole number
+        ryij = ryij - int(ryij)
+        rzij = rzij - int(rzij)
+        vxij = vxi - vx[j]
+        vyij = vyi - vy[j]
+        vzij = vzi - vz[j]
+        bij = rxij*vxij + ryij*vyij + rzij*vzij
+
+        if (bij<0.0):
+            rijsq = rxij**2 + ryij**2 + rzij**2
+            vijsq = vxij**2 + vyij**2 + vzij**2
+            discr = bij**2 - vijsq*(rijsq - sigsq)
+            if (discr>0.0):
+                tij = (-bij - math.sqrt(discr))/vijsq
+                if (tij<coltim[i]):
+                    coltim[i] = tij
+                    partnr[i] = j
+        continue
+    return
+
 
 createcoord()
 

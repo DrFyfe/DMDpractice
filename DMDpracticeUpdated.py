@@ -375,3 +375,12 @@ for bin in range(0,maxbin):
 	nideal = grconst*(rupper**3 - rlower**3)
 	gr[bin] = float(hist(bin))/float(steps)/float(n)/nideal
 	f[bin] = rlower+delr/2
+	continue
+for bin in range(0,maxbin):
+	f.write("%i\n" % f[bin]/sigma)
+	f.write(gr[bin]
+	continue
+
+		
+	
+	

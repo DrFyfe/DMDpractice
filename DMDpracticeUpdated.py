@@ -378,7 +378,7 @@ for bin in range(0,maxbin):
 	continue
 for bin in range(0,maxbin):
 	f.write("%i\n" % f[bin]/sigma)
-	f.write(gr[bin]
+	f.write("%i\n" % gr[bin])
 	continue
 
 		

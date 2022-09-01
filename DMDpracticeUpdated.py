@@ -34,6 +34,10 @@ rz = np.arange(0,n,dtype=float)
 vx = np.arange(0,n,dtype=float)
 vy = np.arange(0,n,dtype=float)
 vz = np.arange(0,n,dtype=float)
+
+gr = np.arange(0,maxbin,dtype=float)
+f = np.arange(0,maxbin,dtype=float)
+coltime = np.arange(0,n,dtype=float)
 #possibly make arrays for gr, coltime, etc?
 
 def createcoord(): #trying to recreate the createcoord subroutine

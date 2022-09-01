@@ -7,7 +7,6 @@ timbig = 1.0E10 # maximum time
 pi = 3.14159265359
 maxbin = 500
 delr = 0.001
-sigsq = sigma**2
 
 print('PROGRAM SPHERE')
 print('Molecular Dynamics of Hard Spheres')
@@ -26,7 +25,8 @@ print("Run title", title)
 print("Reduced collision Density is", density)
 print("Collisions required", ncoll)
 
-sigma = (density/float(n))**(1.0/3.0)
+sigma = float((float(density)/int(n))**float(1.0/3.0))
+sigsq = sigma**2
 rx = np.arange(0,n,dtype=float) #setting up arrays for reference in createcoord,vel
 ry = np.arange(0,n,dtype=float)
 rz = np.arange(0,n,dtype=float)
@@ -130,7 +130,7 @@ def check(): #tests for pair overlaps, calculates kinetic energy
             ryij = ryi - ry[j]
             rzij = rzi - rz[j]
             rxij = rxij - int(rxij)
-            ryij = ryij - int{ryij}
+            ryij = ryij - int(ryij)
             rzij = rzij - int(rzij)
             rijsq = rxij**2 + ryij**2 + rzij**2
             rij = math.sqrt(rijsq/sigsq)
@@ -138,7 +138,7 @@ def check(): #tests for pair overlaps, calculates kinetic energy
             if (rijsq < sigsq):
                 rij = math.sqrt(rijsq/sigsq)
             if ((1.0-rij) > tol):
-		sys.exit("Overlap Detected")
+                sys.exit("Overlap Detected")
             continue
         continue
     for i in range(0, n):
@@ -186,7 +186,7 @@ def dnlist(): #looks for collisions with atoms i<j
         if (tij < coltim[i]):
             coltim[i] = tij
             partnr[i] = j
-	continue
+        continue
     return
 
 def uplist():
@@ -282,11 +282,11 @@ t = t + tij
 for k in range(0,n):
     coltim[k] = coltim[k] - tij
     rx[k] = rx[k] + vx[k]*tij
-	ry[k] = ry[k] + vy[k]*tij
-	rz[k] = rz[k] + vz[k]*tij
-	rx[k] = rx[k] - int(rx[k])
-	ry[k] = ry[k] - int(ry[k])
-	rz[k] = rz[k] - int(rz[k])
+    ry[k] = ry[k] + vy[k]*tij
+    rz[k] = rz[k] + vz[k]*tij
+    rx[k] = rx[k] - int(rx[k])
+    ry[k] = ry[k] - int(ry[k])
+    rz[k] = rz[k] - int(rz[k])
     continue
 
 coltim[n+1] = coltim[n+1] - tij
@@ -299,7 +299,7 @@ def bump():
     ryij = ryij - int(ryij)
     rzij = rzij - int(rzij)
 
-    factor = (rxij*(vx[i]-vx[j]) + ryij*(vy[i]-vy[j]) + rzij*(vz[i]-vz[j])/sigsq
+    factor = rxij*(vx[i]-vx[j]) + ryij*(vy[i]-vy[j]) + rzij*(vz[i]-vz[j])/sigsq
 
     delvx = -factor*rxij
     delvy = -factor*ryij
@@ -320,8 +320,8 @@ bump()
 acw = acw + w
 
 for k in range(0,n):
-    if (k == i) or (k == j) or (partnr[k] == j)):
-        uplist():
+    if (k == i) or (k == j) or (partnr[k] == j):
+        uplist()
     continue
 
 dnlist() # for i
@@ -331,8 +331,7 @@ if (coll == uplistcntr - 1):
     for i in range(1,n+1):
         uplist() # for i
         continue
-    uplistcntr = uplist cntr + 10
-    continue
+    uplistcntr = uplistcntr + 10
 if (coll == kecntr):
     for i in range(1,n+1):
         e = e + vx[i]**2+vy[i]**2+vz[i]**2

@@ -12,7 +12,7 @@ sigsq = sigma**2
 print('PROGRAM SPHERE')
 print('Molecular Dynamics of Hard Spheres')
 print('Results in Units kt = sigma = 1')
-
+#f.write("%i\n" % x) use this for writing to file as a column
 
 title = input("Enter run title: ")
 f = open(title, "w") #trying to have the output file named

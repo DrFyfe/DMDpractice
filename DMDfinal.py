@@ -17,9 +17,12 @@ title = input("Enter run title: ")
 f = open(title, "w") #trying to have the output file named
 
 n = input("Enter number of spheres:") #number of spheres
+n = int(n)
 density = input("Enter reduced density: ")
+density = float(density)
 
 ncoll = input("Enter number of collisions required: ") #required user inputs
+ncoll = 
 
 print("Run title", title)
 print("Reduced collision Density is", density)

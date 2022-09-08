@@ -335,12 +335,13 @@ if (coll == uplistcntr - 1):
 if (coll == kecntr):
     for i in range(1,n+1):
         e = e + vx[i]**2+vy[i]**2+vz[i]**2
-        e = 0.5*e
-        en = e/float(n)
-        enkt = en/temp
-        f.write("coll and ke and enkt and  w", coll, e, enkt,  w)
-        kecntr = kecntr + 50
-        continue
+	continue
+    e = 0.5*e
+    en = e/float(n)
+    enkt = en/temp
+    f.write("coll and ke and enkt and  w", coll, e, enkt,  w)
+    kecntr = kecntr + 50
+    continue
 print("end of dynamics")
 print("Final Colliding Pair", i, j)
 #checking for overlaps
@@ -375,9 +376,10 @@ for bin in range(0,maxbin):
 	gr[bin] = float(hist(bin))/float(steps)/float(n)/nideal
 	f[bin] = rlower+delr/2
 	continue
+file1 = open("gr.txt", "w")
 for bin in range(0,maxbin):
 	f.write("%i\n" % f[bin]/sigma)
-	f.write("%i\n" % gr[bin])
+	file1.write("%i\n" % gr[bin])
 	continue
 
 		

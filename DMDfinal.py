@@ -228,7 +228,29 @@ def uplist(x):
         continue
     return
 
+def bump():
+    rxij = rx[i] - rx[j]
+    ryij = ry[i] - ry[j]
+    rzij = rz[i] - rz[j]
+    rxij = rxij - int(rxij)
+    ryij = ryij - int(ryij)
+    rzij = rzij - int(rzij)
 
+    factor = rxij*(vx[i]-vx[j]) + ryij*(vy[i]-vy[j]) + rzij*(vz[i]-vz[j])/sigsq
+
+    delvx = -factor*rxij
+    delvy = -factor*ryij
+    delvz = -factor*rzij
+
+    vx[i] = vx[i] + delvx
+    vx[j] = vx[j] - delvx
+    vy[i] = vy[i] + delvy
+    vy[j] = vy[j] - delvy
+    vz[i] = vz[i] + delvz
+    vz[j] = vz[j] - delvz
+
+    w = delvx*rxij + delvy*ryij + delvz*rzij
+    return
 createcoord()
 
 createvel()
@@ -263,7 +285,7 @@ t = 0.0
 uplistcntr = 10
 grcount = 20
 
-for coll in range(0,ncoll):
+for coll in range(0,ncoll): #main loop
     tij = timbig
     for k in range(0,n):
         if(coltim[k] < tij):
@@ -277,75 +299,51 @@ for coll in range(0,ncoll):
         steps = steps + 1
     else:
         j = partnr[i]
-    continue
 
-#**Move particles forward by time tij**
-#**and reduce collision times**
-#**apply periodic boundaries**
-t = t + tij
-for k in range(0,n):
-    coltim[k] = coltim[k] - tij
-    rx[k] = rx[k] + vx[k]*tij
-    ry[k] = ry[k] + vy[k]*tij
-    rz[k] = rz[k] + vz[k]*tij
-    rx[k] = rx[k] - int(rx[k])
-    ry[k] = ry[k] - int(ry[k])
-    rz[k] = rz[k] - int(rz[k])
-    continue
-
-coltim[n+1] = coltim[n+1] - tij
-
-def bump():
-    rxij = rx[i] - rx[j]
-    ryij = ry[i] - ry[j]
-    rzij = rz[i] - rz[j]
-    rxij = rxij - int(rxij)
-    ryij = ryij - int(ryij)
-    rzij = rzij - int(rzij)
-
-    factor = rxij*(vx[i]-vx[j]) + ryij*(vy[i]-vy[j]) + rzij*(vz[i]-vz[j])/sigsq
-
-    delvx = -factor*rxij
-    delvy = -factor*ryij
-    delvz = -factor*rzij
-
-    vx[i] = vx[i] + delvx
-    vx[j] = vx[j] - delvx
-    vy[i] = vy[i] + delvy
-    vy[j] = vy[j] - delvy
-    vz[i] = vz[i] + delvz
-    vz[j] = vz[j] - delvz
-
-    w = delvx*rxij + delvy*ryij + delvz*rzij
-    return
-
-bump()
-
-acw = acw + w
-
-for k in range(0,n):
-    if (k == i) or (k == j) or (partnr[k] == j):
-        uplist()
-    continue
-
-dnlist(i) # for i
-dnlist(j) # for j
-
-if (coll == uplistcntr - 1):
-    for i in range(1,n+1):
-        uplist() # for i
+    #**Move particles forward by time tij**
+    #**and reduce collision times**
+    #**apply periodic boundaries**
+        t = t + tij
+    for k in range(0,n):
+        coltim[k] = coltim[k] - tij
+        rx[k] = rx[k] + vx[k]*tij
+        ry[k] = ry[k] + vy[k]*tij
+        rz[k] = rz[k] + vz[k]*tij
+        rx[k] = rx[k] - int(rx[k])
+        ry[k] = ry[k] - int(ry[k])
+        rz[k] = rz[k] - int(rz[k])
         continue
-    uplistcntr = uplistcntr + 10
-if (coll == kecntr):
-    for i in range(1,n+1):
-        e = e + vx[i]**2+vy[i]**2+vz[i]**2
-	continue
-    e = 0.5*e
-    en = e/float(n)
-    enkt = en/temp
-    f.write("coll and ke and enkt and  w", coll, e, enkt,  w)
-    kecntr = kecntr + 50
-    continue
+
+    coltim[n+1] = coltim[n+1] - tij
+
+
+    bump()
+
+    acw = acw + w
+
+    for k in range(0,n):
+        if (k == i) or (k == j) or (partnr[k] == j):
+            uplist(k) #is k the correct input?
+        continue
+
+    dnlist(i) # for i
+    dnlist(j) # for j
+
+    if (coll == uplistcntr - 1):
+        for i in range(1,n+1):
+            uplist() # for i
+            continue
+        uplistcntr = uplistcntr + 10
+    if (coll == kecntr):
+        for i in range(1,n+1):
+            e = e + vx[i]**2+vy[i]**2+vz[i]**2
+            continue
+        e = 0.5*e
+        en = e/float(n)
+        enkt = en/temp
+        f.write("coll and ke and enkt and  w", coll, e, enkt,  w)
+        kecntr = kecntr + 50
+    continue #end of main loop
 print("end of dynamics")
 print("Final Colliding Pair", i, j)
 #checking for overlaps

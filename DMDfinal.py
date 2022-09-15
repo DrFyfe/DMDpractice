@@ -87,7 +87,8 @@ def createcoord(): #trying to recreate the createcoord subroutine
 def createvel():
     kb = 1
     temp = 3
-    destemp = float(input("Enter desired reduced temp: "))
+    destemp = input("Enter desired reduced temp:")
+    destemp = float(destemp)
 
     rtemp = math.sqrt(destemp)
     meanke = (1.5*kb*rtemp)/n
@@ -192,8 +193,8 @@ def dnlist(x): #looks for collisions with atoms i<j
         continue
     return
 
-def uplist():
-    if (i == n):
+def uplist(x):
+    if (x == n):
         return
     coltim[i] = timbig
     rxi = rx[i]

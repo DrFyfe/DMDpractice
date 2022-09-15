@@ -22,7 +22,7 @@ density = input("Enter reduced density: ")
 density = float(density)
 
 ncoll = input("Enter number of collisions required: ") #required user inputs
-ncoll = 
+ncoll = int(ncoll)
 
 print("Run title", title)
 print("Reduced collision Density is", density)
@@ -381,7 +381,7 @@ for bin in range(0,maxbin):
 	continue
 file1 = open("gr.txt", "w")
 for bin in range(0,maxbin):
-	f.write("%i\n" % f[bin]/sigma)
+	file1.write("%i\n" % f[bin]/sigma)
 	file1.write("%i\n" % gr[bin])
 	continue
 ITEM: TIMESTEP

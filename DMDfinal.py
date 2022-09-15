@@ -328,8 +328,8 @@ for k in range(0,n):
         uplist()
     continue
 
-dnlist() # for i
-dnlist() # for j
+dnlist(i) # for i
+dnlist(j) # for j
 
 if (coll == uplistcntr - 1):
     for i in range(1,n+1):

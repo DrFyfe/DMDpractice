@@ -15,7 +15,7 @@ print('Results in Units kt = sigma = 1')
 
 title = input("Enter run title: ")
 f = open(title, "w") #trying to have the output file named
-
+file2 = open("miscinfo.txt","w")
 n = input("Enter number of spheres:") #number of spheres
 n = int(n)
 density = input("Enter reduced density: ")
@@ -343,6 +343,8 @@ for coll in range(0,ncoll): #main loop
         en = e/float(n)
         enkt = en/temp
         f.write("coll and ke and enkt and  w", coll, e, enkt,  w)
+	file2.write("en:")
+	file2.write("%i\n" % en)
         kecntr = kecntr + 50
     continue #end of main loop
 print("end of dynamics")

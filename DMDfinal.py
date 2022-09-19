@@ -323,7 +323,7 @@ for coll in range(0,ncoll): #main loop
     acw = acw + w
 
     for k in range(0,n):
-        if (k == i) or (k == j) or (partnr[k] == j):
+        if (k == i) or (partnr[k] == i) (k == j) or (partnr[k] == j):
             uplist(k) #is k the correct input?
         continue
 
@@ -345,6 +345,13 @@ for coll in range(0,ncoll): #main loop
         f.write("coll and ke and enkt and  w", coll, e, enkt,  w)
 	file2.write("en:")
 	file2.write("%i\n" % en)
+	file2.write("acw:")
+	file2.write("%i\n" % acw)
+	file2.write("temp:")
+	file2.write("%i\n" % temp)
+	file2.write("t:")
+	file2.write("%i\n" % t)
+	
         kecntr = kecntr + 50
     continue #end of main loop
 print("end of dynamics")

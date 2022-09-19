@@ -265,7 +265,7 @@ enkt = en/temp
 print("Initial e/nkt", enkt)
 
 for i in range(0, n):
-    coltime[i] = timbig
+    coltim[i] = timbig
     partnr[i] = n
     continue
 for i in range(0,n):
@@ -274,7 +274,7 @@ for i in range(0,n):
 #zero virial accumulator
 f.write('After 1st UPLIST i, coltim(i)',i,coltim[i])
 
-coltime[n+1] = 5.0 #why is it 5?
+coltim[n+1] = 5.0 #why is it 5?
 
 acw = 0.0
 

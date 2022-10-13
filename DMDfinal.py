@@ -14,8 +14,9 @@ print('Results in Units kt = sigma = 1')
 #f.write("%i\n" % x) use this for writing to file as a column
 
 title = input("Enter run title: ")
-f = open(title, "w") #trying to have the output file named
-file2 = open("miscinfo.txt","w")
+file1 = open(title, "a") #trying to have the output file named
+file2 = open("miscinfo.txt","a")
+file3 = open("trajfile.txt","a")
 n = input("Enter number of spheres:") #number of spheres
 n = int(n)
 density = input("Enter reduced density: ")
@@ -150,9 +151,9 @@ def check(): #tests for pair overlaps, calculates kinetic energy
         e = e + vx[i]**2 + vy[i]**2 + vz[i]**2
         continue
     e = 0.5*e
-    return
-def dnlist(x): #looks for collisions with atoms i<j
-    if (x == 1):
+    return e
+def dnlist(j): #looks for collisions with atoms i<j
+    if (j == 1):
         return
     rxj = rx[j]
     ryj = ry[j]
@@ -172,14 +173,14 @@ def dnlist(x): #looks for collisions with atoms i<j
         vyij = vy[i] - vyj
         vzij = vz[i] - vzj
         bij = rxij*vxij + ryij*vyij + rzij*vzij
-        ryij = ry(i) - ryj
-        rzij = rz(i) - rzj
+        ryij = ry[i] - ryj
+        rzij = rz[i] - rzj
         rxij = rxij - int(rxij)
         ryij = ryij -  int(ryij)
         rzij = rzij - int(rzij)
-        vxij = vx(i) - vxj
-        vyij = vy(i) - vyj
-        vzij = vz(i) - vzj
+        vxij = vx[i] - vxj
+        vyij = vy[i] - vyj
+        vzij = vz[i] - vzj
         bij = rxij*vxij + ryij*vyij + rzij*vzij
 
         if (bij < 0.0):
@@ -194,8 +195,8 @@ def dnlist(x): #looks for collisions with atoms i<j
         continue
     return
 
-def uplist(x):
-    if (x == n):
+def uplist(i):
+    if (i == n):
         return
     coltim[i] = timbig
     rxi = rx[i]
@@ -251,7 +252,7 @@ def bump():
     vz[j] = vz[j] - delvz
 
     w = delvx*rxij + delvy*ryij + delvz*rzij
-    return
+    return w
 createcoord()
 
 createvel()
@@ -325,40 +326,71 @@ for coll in range(0,ncoll): #main loop
     for k in range(0,n):
         if (k == i) or (partnr[k] == i) (k == j) or (partnr[k] == j):
             uplist(k) #is k the correct input?
-        continue
 
     dnlist(i) # for i
     dnlist(j) # for j
 
     if (coll == uplistcntr - 1):
-        for i in range(1,n+1):
-            uplist() # for i
-            continue
+        for i in range(0,n):
+            uplist(i) # for i
         uplistcntr = uplistcntr + 10
     if (coll == kecntr):
-        for i in range(1,n+1):
+        for i in range(0,n):
             e = e + vx[i]**2+vy[i]**2+vz[i]**2
-            continue
         e = 0.5*e
         en = e/float(n)
         enkt = en/temp
-        f.write("coll and ke and enkt and  w", coll, e, enkt,  w)
-	file2.write("en:")
-	file2.write("%i\n" % en)
-	file2.write("acw:")
-	file2.write("%i\n" % acw)
-	file2.write("temp:")
-	file2.write("%i\n" % temp)
-	file2.write("t:")
-	file2.write("%i\n" % t)
+        e = str(e)
+        coll = str(coll)
+        enkt = str(enkt)
+        w = str(w)
+        acw = str(acw)
+        temp = str(temp)
+        t = str(t) # converting for string for formatting reasons
+        file2.write(coll + " " + e + " " + enkt + " " + w + " " + acw + " " + temp + " " + t)
+	    file2.write("%i\n" % en)
+	    file2.write("%i\n" % acw)
+	    file2.write("%i\n" % temp)
+	    file2.write("%i\n" % t) #consider indent
+        file3.write("ITEM: TIMESTEP\n" + t + "\n")
+        file3.write("ITEM: NUMBER OF ATOMS\n1200")
+        file3.write("ITEM: BOX BOUNDS\n0	40\n0	40\n0	40")
+        file3.write("ITEM: ATOMS index type x y z" + "\n")
+        for n in range(0,n):
+            n = str(n)
+            file3.write("     " + n + "  1")
+            if (rx[n] < 10):
+                file3.write("           ")
+            else:
+                file3.write("          ")
+            file3.write('%.3f' % rx[n])
+            if (ry[n] < 10):
+                file3.write("           ")
+            else:
+                file3.write("          ")
+            file3.write('%.3f' % ry[n])
+            if (rz[n] < 10):
+                file3.write("           ")
+            else:
+                file3.write("          ")
+            file3.write('%.3f' % rz[n])
+            file3.write("\n")
+        e = float(e)
+        coll = float(coll)
+        enkt = float(enkt)
+        w = float(w)
+        acw = float(acw)
+        temp = float(temp)
+        t = float(t) # returning to float format for any potential operations
+    check()
 	
         kecntr = kecntr + 50
-    continue #end of main loop
+ #end of main loop
 print("end of dynamics")
 print("Final Colliding Pair", i, j)
 #checking for overlaps
 check()
-
+t = float(t)
 pvnkt1 = acw/(float(n)*3.0*t*temp)
 en=e/float(n)
 enkt = en/temp
@@ -366,16 +398,16 @@ t = t*math.sqrt(temp)/sigma
 rate = float(ncoll)/t
 tbc = float(n)/rate/2.0
 
-f.write('The final n is', n)
-f.write('The final e is', e)
-f.write('The final temp is', temp)
-f.write('The final acw is', acw)
+file1.write('The final n is', n)
+file1.write('The final e is', e)
+file1.write('The final temp is', temp)
+file1.write('The final acw is', acw)
 print("Final time is", t)
 print("Collision rate is", rate)
 print("Mean collision time", tbc)
 print("Final e/nkt is",enkt)
 print("PV/nkt – 1 is", pvnkt1)
-f.write('The final grcount is', grcount)
+file1.write('The final grcount is', grcount)
 
 #calculate g(r) page 184 tildesley
 

@@ -8,6 +8,8 @@ pi = 3.14159265359
 maxbin = 500
 delr = 0.001
 
+-*- coding: utf-8 -*-
+	
 print('PROGRAM SPHERE')
 print('Molecular Dynamics of Hard Spheres')
 print('Results in Units kt = sigma = 1')
@@ -406,7 +408,7 @@ print("Final time is", t)
 print("Collision rate is", rate)
 print("Mean collision time", tbc)
 print("Final e/nkt is",enkt)
-print("PV/nkt – 1 is", pvnkt1)
+print("PV/nkt Â– 1 is", pvnkt1)
 file1.write('The final grcount is', grcount)
 
 #calculate g(r) page 184 tildesley

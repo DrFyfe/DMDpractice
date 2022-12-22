@@ -357,27 +357,14 @@ for coll in range(0,ncoll): #main loop
 	    file2.write("%i\n" % t) #consider indent
         file3.write("ITEM: TIMESTEP\n" + t + "\n")
         file3.write("ITEM: NUMBER OF ATOMS\n1200")
-        file3.write("ITEM: BOX BOUNDS\n0	40\n0	40\n0	40")
+        file3.write("ITEM: BOX BOUNDS\n0	1\n0	1\n0	1")
         file3.write("ITEM: ATOMS index type x y z" + "\n")
         for n in range(0,n):
-            n = str(n)
-            file3.write("     " + n + "  1")
-            if (rx[n] < 10):
-                file3.write("           ")
-            else:
-                file3.write("          ")
-            file3.write('%.3f' % rx[n])
-            if (ry[n] < 10):
-                file3.write("           ")
-            else:
-                file3.write("          ")
-            file3.write('%.3f' % ry[n])
-            if (rz[n] < 10):
-                file3.write("           ")
-            else:
-                file3.write("          ")
-            file3.write('%.3f' % rz[n])
-            file3.write("\n")
+            	n = str(n)
+            	file3.write("     " + n + "  1" + "           ")
+            	file3.write('%.3f' % rx[n] + "           ")
+            	file3.write('%.3f' % ry[n] + "           ")
+            	file3.write('%.3f' % rz[n] + "\n")
         e = float(e)
         coll = float(coll)
         enkt = float(enkt)

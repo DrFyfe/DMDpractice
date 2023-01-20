@@ -299,8 +299,7 @@ for coll in range(0,ncoll): #main loop
     if (grcount == coll-1):
         grsort()
         grcount = grcount + 20
-        coltim[
-	] = t +5.0
+        coltim[n] = t +5.0
         steps = steps + 1
     else:
         j = partnr[i]

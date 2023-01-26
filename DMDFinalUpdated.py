@@ -7,13 +7,11 @@ timbig = 1.0E10 # maximum time
 pi = 3.14159265359
 maxbin = 500
 delr = 0.001
-
--*- coding: utf-8 -*-
-	
+e = 0
+    
 print('PROGRAM SPHERE')
 print('Molecular Dynamics of Hard Spheres')
 print('Results in Units kt = sigma = 1')
-#f.write("%i\n" % x) use this for writing to file as a column
 
 title = input("Enter run title: ")
 file1 = open(title, "a") #trying to have the output file named
@@ -23,7 +21,6 @@ n = input("Enter number of spheres:") #number of spheres
 n = int(n)
 density = input("Enter reduced density: ")
 density = float(density)
-
 ncoll = input("Enter number of collisions required: ") #required user inputs
 ncoll = int(ncoll)
 
@@ -43,6 +40,7 @@ vz = np.arange(0,n,dtype=float)
 
 gr = np.arange(0,maxbin,dtype=float)
 f = np.arange(0,maxbin,dtype=float)
+hist = np.arange(0,maxbin,dtype=float)
 coltim = np.arange(0,n,dtype=float)
 partnr = np.arange(0,n,dtype=float)
 #possibly make arrays for gr, coltime, etc?
@@ -87,6 +85,30 @@ def createcoord(): #trying to recreate the createcoord subroutine
         print("rx, ry, rz", float(rx[i]),float(ry[i]),float(rz[i]))
         continue
     return
+def grsort():
+    n = 108
+    maxbin = 500
+    delr = 0.001
+    for i in range(0,n):
+        rxi = rx[i]
+        ryi = ry[i]
+        rzi = rz[i]
+
+    for j in range(i+1,n+1):
+        rxij = rxi - rx[j]
+        ryij = ryi - ry[j]
+        rzij = rzi - rz[j]
+        rxij = rxij - int(rxij)
+        ryij = ryij - int(ryij)
+        rzij = rzij - int(rzij)
+
+        rijsq = rxij**2 + ryij**2 + rzij**2
+        rij = math.sqrt(rijsq)
+        bin = int(rij/delr)+1
+
+        if (bin < maxbin):
+            hist[bin] = hist[bin] + 2
+        continue
 
 def createvel():
     kb = 1
@@ -153,7 +175,7 @@ def check(): #tests for pair overlaps, calculates kinetic energy
         e = e + vx[i]**2 + vy[i]**2 + vz[i]**2
         continue
     e = 0.5*e
-    return e
+    return e, rxi, ryi, rzi
 def dnlist(j): #looks for collisions with atoms i<j
     if (j == 1):
         return
@@ -190,7 +212,7 @@ def dnlist(j): #looks for collisions with atoms i<j
             vijsq = vxij**2 + vyij**2 + vzij**2
             discr = bij**2 - vijsq*(rijsq-sigsq)
         if (discr > 0.0):
-            tij = (-bij - SQRT(discr))/vijsq
+            tij = (-bij - math.SQRT(discr))/vijsq
         if (tij < coltim[i]):
             coltim[i] = tij
             partnr[i] = j
@@ -350,20 +372,20 @@ for coll in range(0,ncoll): #main loop
         temp = str(temp)
         t = str(t) # converting for string for formatting reasons
         file2.write(coll + " " + e + " " + enkt + " " + w + " " + acw + " " + temp + " " + t)
-	    file2.write("%i\n" % en)
-	    file2.write("%i\n" % acw)
-	    file2.write("%i\n" % temp)
-	    file2.write("%i\n" % t) #consider indent
+        file2.write("%i\n" % en)
+        file2.write("%i\n" % acw)
+        file2.write("%i\n" % temp)
+        file2.write("%i\n" % t) #consider indent
         file3.write("ITEM: TIMESTEP\n" + t + "\n")
         file3.write("ITEM: NUMBER OF ATOMS\n1200")
         file3.write("ITEM: BOX BOUNDS\n0	1\n0	1\n0	1")
         file3.write("ITEM: ATOMS index type x y z" + "\n")
         for n in range(0,n):
-            	n = str(n)
-            	file3.write("     " + n + "  1" + "           ")
-            	file3.write('%.3f' % rx[n] + "           ")
-            	file3.write('%.3f' % ry[n] + "           ")
-            	file3.write('%.3f' % rz[n] + "\n")
+            n = str(n)
+            file3.write("     " + n + "  1" + "           ")
+            file3.write('%.3f' % rx[n] + "           ")
+            file3.write('%.3f' % ry[n] + "           ")
+            file3.write('%.3f' % rz[n] + "\n")
         e = float(e)
         coll = float(coll)
         enkt = float(enkt)
@@ -371,8 +393,8 @@ for coll in range(0,ncoll): #main loop
         acw = float(acw)
         temp = float(temp)
         t = float(t) # returning to float format for any potential operations
-    check()
-	
+        check()
+    
         kecntr = kecntr + 50
  #end of main loop
 print("end of dynamics")
@@ -403,19 +425,15 @@ file1.write('The final grcount is', grcount)
 grconst = 4.0*pi*n/3
 
 for bin in range(0,maxbin):
-	rlower = float(bin-1)*delr
-	rupper = rlower + delr
-	nideal = grconst*(rupper**3 - rlower**3)
-	gr[bin] = float(hist(bin))/float(steps)/float(n)/nideal
-	f[bin] = rlower+delr/2
-	continue
+    rlower = float(bin-1)*delr
+    rupper = rlower + delr
+    nideal = grconst*(rupper**3 - rlower**3)
+    gr[bin] = float(hist(bin))/float(steps)/float(n)/nideal
+    f[bin] = rlower+delr/2
+    continue
 file1 = open("gr.txt", "w")
 for bin in range(0,maxbin):
-	file1.write("%i\n" % f[bin]/sigma)
-	file1.write("%i\n" % gr[bin])
-	continue
+    file1.write("%i\n" % f[bin]/sigma)
+    file1.write("%i\n" % gr[bin])
+    continue
 #end of program
-
-		
-	
-	

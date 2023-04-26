@@ -6,6 +6,7 @@ import array as arr
 import numpy as np
 timbig = 1.0E10 # maximum time
 pi = 3.14159265359
+bin = 0
 maxbin = 500
 delr = 0.001
 e = 0.0
@@ -86,9 +87,11 @@ def createcoord(rx,ry,rz): #trying to recreate the createcoord subroutine
         rz[i] = rz[i]-0.5
 #        print("rx, ry, rz", float(rx[i]),float(ry[i]),float(rz[i]))
         continue
-    return
-def grsort(rx,ry,rz):
+    return rx,ry,rz
+#   return rx, ry, rz
+def grsort(rx,ry,rz,hist):
     #CHange particle number, was originally 0,n and i+1, n+1
+    global bin
     for i in range(0,n-1):
         rxi = rx[i]
         ryi = ry[i]
@@ -104,11 +107,12 @@ def grsort(rx,ry,rz):
             rijsq = rxij**2 + ryij**2 + rzij**2
             rij = math.sqrt(rijsq)
             bin = int(rij/delr)+1
-
+     #       print("bin is",bin)
             if (bin < maxbin):
                 hist[bin] = hist[bin] + 2
-            continue
-    return
+    return bin,hist
+
+ #   return hist[bin],bin #do I need to return hist here?
 
 def createvel(vx,vy,vz):
     #kb = 1
@@ -141,9 +145,9 @@ def createvel(vx,vy,vz):
         vz[i] = vz[i]-sumz
  #       print(vx,vy,vz)
         continue
-    return
+    return vx,vy,vz
 
-def check(rx,ry,rz,e): #tests for pair overlaps, calculates kinetic energy
+def check(rx,ry,rz,e,vx,vy,vz,): #tests for pair overlaps, calculates kinetic energy
     tol = 1.0E-4
     for i in range(0,n):
         rxi = rx[i]
@@ -173,18 +177,22 @@ def check(rx,ry,rz,e): #tests for pair overlaps, calculates kinetic energy
         continue
     for i in range(0, n):
         e = e + vx[i]**2 + vy[i]**2 + vz[i]**2
-        print(e)
+#        print(e)
 #        continue
     e = 0.5*e
-    return
-def dnlist(j,rx,ry,rz,vx,vy,vz): #looks for collisions with atoms i<j
+    return e
+#add coltim, partner as inputs
+def dnlist(sigma,j,rx,ry,rz,vx,vy,vz,coltim,partnr): #looks for collisions with atoms i<j
     tij = timbig
     discr = 0
-    if (j == 1) or (j >= n):
+#    if (j == 1): #or (j >= n): RKJ
+    if(j==1) or (j >=n):
         return
     rxj = rx[j]
+#    if j >= len(rx):RKJ
     if j >= len(rx):
         return
+    sigsq = sigma**2
     rxj = rx[j]
     ryj = ry[j]
     rzj = rz[j]
@@ -192,7 +200,8 @@ def dnlist(j,rx,ry,rz,vx,vy,vz): #looks for collisions with atoms i<j
     vyj = vy[j]
     vzj = vz[j]
 
-    for i in range(1, j):
+#    for i in range(1, j):RKJ
+    for i in range(1,j):
         rxij = rx[i] - rxj
         ryij = ry[i] - ryj
         rzij = rz[i] - rzj
@@ -203,29 +212,25 @@ def dnlist(j,rx,ry,rz,vx,vy,vz): #looks for collisions with atoms i<j
         vyij = vy[i] - vyj
         vzij = vz[i] - vzj
         bij = rxij*vxij + ryij*vyij + rzij*vzij
-        ryij = ry[i] - ryj
-        rzij = rz[i] - rzj
-        rxij = rxij - int(rxij)
-        ryij = ryij -  int(ryij)
-        rzij = rzij - int(rzij)
-        vxij = vx[i] - vxj
-        vyij = vy[i] - vyj
-        vzij = vz[i] - vzj
-        bij = rxij*vxij + ryij*vyij + rzij*vzij
-
+#RKJ
         if (bij < 0.0):
             rijsq = rxij**2 + ryij**2 + rzij**2
             vijsq = vxij**2 + vyij**2 + vzij**2
             discr = bij**2 - vijsq*(rijsq-sigsq)
-        if (discr > 0.0):
-            tij = (-bij - math.sqrt(discr))/vijsq
+            if (discr > 0.0):
+                tij = (-bij - math.sqrt(discr))/vijsq
+                if (tij<0.0):
+                    tij = (-bij + math.sqrt(discr))/vijsq
         if (tij < coltim[i]):
+#            print('i = ', i)
+#            print('Coltim=',coltim[i], 'partnr=', partnr[i], 'i=', i)
             coltim[i] = tij
             partnr[i] = j
-        continue
-    return
+#            print('Coltim=',coltim[i], 'partnr=', partnr[i], 'i=', i)
+#RKJ
+    return coltim,partnr
 
-def uplist(i,rx,ry,rz,vx,vy,vz):
+def uplist(i,rx,ry,rz,vx,vy,vz,coltim,partnr):
     tij = timbig
     if (i == n):
         return
@@ -237,13 +242,13 @@ def uplist(i,rx,ry,rz,vx,vy,vz):
     vyi = vy[i]
     vzi = vz[i]
 
-    for j in range(i+1,n): #potentially needs range correction
+    for j in range(i,n): #potentially needs range correction
         rxij = rxi - rx[j]
         ryij = ryi - ry[j]
         rzij = rzi - rz[j]
-        rxij = rxij - int(rxij) #rounds its argument to the nearest whole number
-        ryij = ryij - int(ryij)
-        rzij = rzij - int(rzij)
+        rxij = rxij - round(rxij) #rounds its argument to the nearest whole number
+        ryij = ryij - round(ryij)
+        rzij = rzij - round(rzij)
         vxij = vxi - vx[j]
         vyij = vyi - vy[j]
         vzij = vzi - vz[j]
@@ -255,13 +260,16 @@ def uplist(i,rx,ry,rz,vx,vy,vz):
             discr = bij**2 - vijsq*(rijsq - sigsq)
             if (discr>0.0):
                 tij = (-bij - math.sqrt(discr))/vijsq
+                if (tij<0.0):
+                     tij = -bij + math.sqrt(discr)/vijsq
                 if (tij<coltim[i]):
                     coltim[i] = tij
                     partnr[i] = j
         continue
-    return
+    return coltim, partnr #maybe coltim[i] and partnr[i] instead?
 
-def bump(w,rx,ry,rz,vx,vy,vz):
+def bump(sigma,i,j,w,rx,ry,rz,vx,vy,vz):
+    sigsq = sigma**2
     rxij = rx[i] - rx[j]
     ryij = ry[i] - ry[j]
     rzij = rz[i] - rz[j]
@@ -282,18 +290,19 @@ def bump(w,rx,ry,rz,vx,vy,vz):
     vz[i] = vz[i] + delvz
     vz[j] = vz[j] - delvz
     w = delvx*rxij + delvy*ryij + delvz*rzij
-    return w
+    return w, vx[i],vy[i],vz[i]
 print("Making Coordinates")
-createcoord(ry,ry,rz)
+rx, ry, rz = createcoord(rx,ry,rz)
 print("Done coordinates, making vels")
-createvel(vx,vy,vz)
+vx,vy,vz = createvel(vx,vy,vz)
 print("Done vels, checking")
-check(rx,ry,rz,e)
+e = check(rx,ry,rz,e,vx,vy,vz)
+print("energy after first check", e)
 print("Done checking, doing loop")
 kecentr = 50
 en = e/float(n)
 temp = 2.0*en/3.0
-print(e)
+#print(e)
 print("Temperature", temp)
 enkt = en/temp
 print("Initial e/nkt", enkt)
@@ -301,10 +310,8 @@ print("Initial e/nkt", enkt)
 for i in range(0, n):
     coltim[i] = timbig
     partnr[i] = n
-    continue
 for i in range(0,n):
-    uplist(i,rx,ry,rz,vx,vy,vz)
-    continue
+    coltim,partnr = uplist(i,rx,ry,rz,vx,vy,vz,coltim,partnr)
 #zero virial accumulator
 file2.write('After 1st UPLIST i, coltim(i)')
 file2.write(str(i))
@@ -329,11 +336,10 @@ for coll in range(0,ncoll): #main loop
         if k >= len(coltim):
             break
         if(coltim[k] < tij):
-            tij = coltim[i]
+            tij = coltim[k]
             i = k
-        continue
     if (grcount == coll-1):
-        grsort(rx,ry,rz)
+        hist = grsort(rx,ry,rz,hist)
         grcount = grcount + 20
         if n >= len(coltim):
             break
@@ -341,11 +347,15 @@ for coll in range(0,ncoll): #main loop
         steps = steps + 1
     else:
         j = partnr[i]
-    steps = steps + 1 #not part of original code, test
+    i = int(i)
+    j = int(j)
+   # print('tij is', tij)
     #**Move particles forward by time tij**
     #**and reduce collision times**
     #**apply periodic boundaries**
+    print("tij is",tij)
     t = t + tij
+    print("time is", t)
     for k in range(0,n):
         coltim[k] = coltim[k] - tij
         rx[k] = rx[k] + vx[k]*tij
@@ -354,25 +364,26 @@ for coll in range(0,ncoll): #main loop
         rx[k] = rx[k] - int(rx[k])
         ry[k] = ry[k] - int(ry[k])
         rz[k] = rz[k] - int(rz[k])
-        continue
 #was originally n+1
     coltim[n-1] = coltim[n-1] - tij
+  #  print("i and j values",i,j)
 
 
-    bump(w,rx,ry,rz,vx,vy,vz)
-    print("Bump happens at coll no.: ", coll)
+    w, vx[i],vy[i],vz[i] = bump(sigma,i,j,w,rx,ry,rz,vx,vy,vz)
+  #  print("Bump happens at coll no.: ", coll)
     acw = acw + w
 
     for k in range(0,n):
         if (k == i) or (partnr[k] == i) or (k == j) or (partnr[k] == j):
-            uplist(k,rx,ry,rz,vx,vy,vz) #is k the correct input?
-
-    dnlist(i,rx,ry,rz,vx,vy,vz) # for i
-    dnlist(j,rx,ry,rz,vx,vy,vz) # for j
+            coltim, partnr = uplist(k,rx,ry,rz,vx,vy,vz,coltim,partnr) #is k the correct input?
+  #  print(coltim[2], coltim[6], coltim[10])
+    coltim, partnr = dnlist(sigma,i,rx,ry,rz,vx,vy,vz,coltim,partnr) # for i
+    coltim, partnr = dnlist(sigma,j,rx,ry,rz,vx,vy,vz,coltim,partnr) # for j
+  #  print(coltim[2], coltim[6], coltim[10])
 
     if (coll == uplistcntr - 1):
         for i in range(0,n):
-            uplist(i,rx,ry,rz,vx,vy,vz) # for i
+            coltim, partnr = uplist(i,rx,ry,rz,vx,vy,vz,coltim,partnr) # for i
         uplistcntr = uplistcntr + 10
     if (coll == kecentr):
         for i in range(0,n):
@@ -416,11 +427,13 @@ for coll in range(0,ncoll): #main loop
 print("end of dynamics")
 print("Final Colliding Pair", i, j)
 #checking for overlaps
-check(rx,ry,rz,e)
+check(rx,ry,rz,e,vx,vy,vz)
 t = float(t)
+print('the time is', t)
 pvnkt1 = acw/(float(n)*3.0*t*temp)
 en=e/float(n)
 enkt = en/temp
+print('sigma is',sigma)
 t = t*math.sqrt(temp)/sigma
 rate = float(ncoll)/t
 tbc = float(n)/rate/2.0
@@ -449,7 +462,7 @@ for bin in range(0,maxbin):
     rlower = float(bin-1)*delr
     rupper = rlower + delr
     nideal = grconst*(rupper**3 - rlower**3)
-#    print(steps,nideal)
+    print(steps,nideal)
     gr[bin] = float(hist[bin])/float(steps)/float(n)/nideal
     f[bin] = rlower+delr/2
     continue
